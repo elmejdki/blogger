@@ -41,6 +41,6 @@ class ArticlesController < ApplicationController
 
   private
   def params_validator
-    params.require(:article).permit(:title, :body, :tag_list)
+    params.require(:article).permit(:title, :body, :tag_list, :image)
   end
 end
