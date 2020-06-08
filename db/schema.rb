@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2020_06_08_065507) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "articles", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -26,15 +29,33 @@ ActiveRecord::Schema.define(version: 2020_06_08_065507) do
   create_table "comments", force: :cascade do |t|
     t.string "author_name"
     t.text "body"
-    t.integer "article_id", null: false
+    t.bigint "article_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["article_id"], name: "index_comments_on_article_id"
   end
 
+  create_table "events", force: :cascade do |t|
+    t.date "date"
+    t.string "title"
+    t.string "body"
+    t.string "place"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
+  end
+
+  create_table "events_users", force: :cascade do |t|
+    t.bigint "attendee_id"
+    t.bigint "attended_event_id"
+    t.index ["attended_event_id"], name: "index_events_users_on_attended_event_id"
+    t.index ["attendee_id"], name: "index_events_users_on_attendee_id"
+  end
+
   create_table "taggings", force: :cascade do |t|
-    t.integer "tag_id", null: false
-    t.integer "article_id", null: false
+    t.bigint "tag_id", null: false
+    t.bigint "article_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["article_id"], name: "index_taggings_on_article_id"
@@ -47,7 +68,15 @@ ActiveRecord::Schema.define(version: 2020_06_08_065507) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "username"
+    t.string "email"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   add_foreign_key "comments", "articles"
+  add_foreign_key "events", "users"
   add_foreign_key "taggings", "articles"
   add_foreign_key "taggings", "tags"
 end
